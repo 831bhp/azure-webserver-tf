@@ -34,6 +34,10 @@ function die {
     exit 1
 }
 
+if [[ $# -eq 0 ]]; then
+    die "ERROR: Please provide Azure subscription id, tenant id, client id and client secret"
+fi
+
 while [[ $# -gt 0 ]]; do
     case $1 in
         -h|--help) die "Please check usage"
