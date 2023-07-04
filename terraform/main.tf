@@ -43,7 +43,7 @@ resource "azurerm_subnet" "internal" {
   address_prefixes     = ["10.0.2.0/24"]
 }
 
-# Create NSG to allow inbound port 8080 & 22
+# Create NSG to allow inbound port 8080 & 22 to the VMSS VMs
 resource "azurerm_network_security_group" "webserver_nsg" {
   name                = "${var.prefix}-nsg"
   location            = azurerm_resource_group.webserver_rg.location
@@ -56,21 +56,10 @@ resource "azurerm_network_security_group" "webserver_nsg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "8080"
+    destination_port_range     = "80" #TODO: Change this to 8080
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  # security_rule {
-  #   name                       = "allowInbound-80"
-  #   priority                   = 101
-  #   direction                  = "Inbound"
-  #   access                     = "Allow"
-  #   protocol                   = "Tcp"
-  #   source_port_range          = "*"
-  #   destination_port_range     = "80"
-  #   source_address_prefix      = "*"
-  #   destination_address_prefix = "*"
-  # }
   security_rule {
     name                       = "allowInbound-22"
     priority                   = 102
@@ -130,7 +119,7 @@ resource "azurerm_lb_backend_address_pool" "webserver_vmsspool" {
 resource "azurerm_lb_probe" "ProbeA" {
   loadbalancer_id     = azurerm_lb.webserver_app_balancer.id
   name                = "probeA"
-  port                = 8080
+  port                = 80 #TODO: Change this to 8080
   protocol            = "Http"
   request_path        = "/Health"
   depends_on=[
@@ -144,7 +133,7 @@ resource "azurerm_lb_rule" "RuleA" {
   name                           = "RuleA"
   protocol                       = "Tcp"
   frontend_port                  = 80
-  backend_port                   = 80
+  backend_port                   = 80 #TODO: Change this to 8080
   frontend_ip_configuration_name = "frontend-ip"
   backend_address_pool_ids = [ azurerm_lb_backend_address_pool.webserver_vmsspool.id ]
   depends_on=[
@@ -193,82 +182,6 @@ resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
   ]
 }
 
-# Create VMSS
-# resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
-#   name                = "webserver-scaleset"
-#   location            = azurerm_resource_group.webserver_rg.location
-#   resource_group_name = azurerm_resource_group.webserver_rg.name
-
-#   # automatic rolling upgrade
-#   automatic_os_upgrade = true
-#   upgrade_policy_mode  = "Rolling"
-
-#   rolling_upgrade_policy {
-#     max_batch_instance_percent              = 20
-#     max_unhealthy_instance_percent          = 20
-#     max_unhealthy_upgraded_instance_percent = 5
-#     pause_time_between_batches              = "PT0S"
-#   }
-
-#   # required when using rolling upgrade policy
-#   health_probe_id = azurerm_lb_probe.ProbeA.id
-
-#   sku {
-#     name     = var.vm_size
-#     tier     = "Standard"
-#     capacity = 2
-#   }
-
-#   storage_profile_image_reference {
-#     publisher = "Canonical"
-#     offer     = "UbuntuServer"
-#     sku       = var.ubuntu_version
-#     version   = "latest"
-#   }
-
-#   storage_profile_os_disk {
-#     name              = ""
-#     caching           = "ReadWrite"
-#     create_option     = "FromImage"
-#     managed_disk_type = "Standard_LRS"
-#   }
-
-#   storage_profile_data_disk {
-#     lun           = 0
-#     caching       = "ReadWrite"
-#     create_option = "Empty"
-#     disk_size_gb  = 10
-#   }
-
-#   os_profile {
-#     computer_name_prefix = "apache_webserver"
-#     admin_username       = var.user
-#   }
-
-#   os_profile_linux_config {
-#     disable_password_authentication = true
-
-#     ssh_keys {
-#       path     = "/home/${var.user}/.ssh/authorized_keys"
-#       key_data = file("id_rsa.pub")
-#     }
-#   }
-
-#   network_profile {
-#     name    = "networkprofile"
-#     primary = true
-
-#     ip_configuration {
-#       name                                   = "IPConfiguration"
-#       primary                                = true
-#       subnet_id                              = azurerm_subnet.internal.id
-#       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.webserver_vmsspool.id]
-#     }
-#   }
-#   depends_on=[
-#       azurerm_lb_backend_address_pool.webserver_vmsspool
-#   ]
-# }
 
 # Create SA & upload config_webserver.sh script
 resource "azurerm_storage_account" "webserver_sa" {
@@ -290,7 +203,7 @@ resource "azurerm_storage_container" "webserver_data" {
 
 # Upload config_webserver.sh script as a blob to the Azure storage account
 resource "azurerm_storage_blob" "webserver_install" {
-  name                   = "webserverinstall"
+  name                   = "config_webserver.sh"
   storage_account_name   = "webserversa310583"
   storage_container_name = "webserverdata"
   type                   = "Block"
@@ -302,16 +215,72 @@ resource "azurerm_storage_blob" "webserver_install" {
 resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   name                 = "webserver-extension"
   virtual_machine_scale_set_id   = azurerm_linux_virtual_machine_scale_set.webserver_scaleset.id
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
+  # publisher            = "Microsoft.Azure.Extensions"
+  # type                 = "CustomScript"
+  # type_handler_version = "2.0"
+  publisher            = "Microsoft.Compute"
+  type                 = "CustomScriptExtension"
+
   depends_on = [
+    azurerm_linux_virtual_machine_scale_set.webserver_scaleset,
     azurerm_storage_blob.webserver_install
   ]
   settings = <<SETTINGS
     {
         "fileUris": ["https://${azurerm_storage_account.webserver_sa.name}.blob.core.windows.net/webserverdata/config_webserver.sh"],
-          "commandToExecute": "sh config_webserver.sh"
+        "commandToExecute": "./config_webserver.sh"
     }
 SETTINGS
 }
+
+# Create a jumpVM to troubleshoot the VMSS extention issue
+resource "azurerm_public_ip" "jumpvm_public_ip" {
+  name                = "jumpvm-public-ip"
+  location            = azurerm_resource_group.webserver_rg.location
+  resource_group_name = azurerm_resource_group.webserver_rg.name
+  allocation_method   = "Dynamic"
+  sku                 = "Basic"
+}
+resource "azurerm_network_interface" "jumpvm_nic" {
+  name                = "jumpvm-nic"
+  location            = azurerm_resource_group.webserver_rg.location
+  resource_group_name = azurerm_resource_group.webserver_rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.internal.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = azurerm_public_ip.jumpvm_public_ip.id
+  }
+  depends_on = [azurerm_public_ip.azurerm_public_ip.jumpvm_public_ip]
+}
+
+resource "azurerm_linux_virtual_machine" "jumpVM" {
+  name                = "jumpVM"
+  resource_group_name = azurerm_resource_group.webserver_rg.name
+  location            = azurerm_resource_group.webserver_rg.location
+  size                = var.vm_size
+  admin_username      = var.user
+  network_interface_ids = [
+    azurerm_network_interface.jumpvm_nic.id
+  ]
+
+  admin_ssh_key {
+    username   = var.user
+    public_key = local.public_key
+  }
+
+  os_disk {
+    caching              = "ReadWrite"
+    storage_account_type = "Standard_LRS"
+  }
+
+  source_image_reference {
+    publisher = "Canonical"
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = var.ubuntu_version
+    version   = "latest"
+  }
+  depends_on = [azurerm_network_interface.jumpvm_nic]
+}
+

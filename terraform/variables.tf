@@ -14,7 +14,7 @@ variable "vm_size" {
 }
 
 variable "ubuntu_version" {
-  default = "20_04-lts"
+  default = "18.04-lts"
 }
 
 variable "storage_account_type" {
