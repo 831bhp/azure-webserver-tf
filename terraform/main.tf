@@ -7,6 +7,10 @@ terraform {
   }
 }
 
+locals {
+  public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC/xkcU8ATJvV0JVgJP0e8OQkdOp7WCsHeRsx+xTiYVDquWkz3hAdysAp4/IKbzxTDIPoqS1hrHVRUwBAYLO6p0Q05LHl1mjTDnpps++zEWgKh5KwhZuhinq6Vhogn9ri/1lmcJGTw/JMSlTAPF3CGnRc9QJP6qGZRJrO3yZUo4iX/bG4eRseiTnFPzR53rcNPvTzeIuNptkTEBgdz+SZbK4jDSGSJLA53b8LrWoZJZ4D0Ki4ktr/NV2GVNgykOhOVemmjr0ko8XuoS7afju6RPobMPvkuGFChLvp07Ga0b+YgMvWeJuq5imgjNA3Wp17VnMRX5zPhjMl+rVVNuDXemcxbnlbmUaWQnlP61nHiouUoyVebZWXs18ZHD8UnN1a6gzgH99HocdihZH0yjALywVrvh9u55DavVcPEZansJXEx9qrESltHB31RaYaobA9BO0C0fmCEfwh1bLC7k0ybd+KyFmHr9YGPBGOoXDlNkDVDeF0OqO23xuAcNuQ/eBXc= pritam@buildvm"
+}
+
 # Setup Azure Provider and config access parameters through variables 
 provider "azurerm" {
   # Configuration options
@@ -92,24 +96,8 @@ resource "azurerm_public_ip" "webserver_public_ip" {
   name                = "${var.prefix}-public-ip"
   location            = azurerm_resource_group.webserver_rg.location
   resource_group_name = azurerm_resource_group.webserver_rg.name
-  allocation_method   = "Dynamic"
-}
-
-# Create NIC
-resource "azurerm_network_interface" "webserver_nic" {
-  name                = "${var.prefix}-nic"
-  resource_group_name = azurerm_resource_group.webserver_rg.name
-  location            = azurerm_resource_group.webserver_rg.location
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.internal.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = azurerm_public_ip.webserver_public_ip.id
-  }
-  depends_on = [
-    azurerm_public_ip.webserver_public_ip
-  ]
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
 
 # Create Load balancer
@@ -117,7 +105,7 @@ resource "azurerm_lb" "webserver_app_balancer" {
   name                = "webserver-app-balancer"
   location            = azurerm_resource_group.webserver_rg.location
   resource_group_name = azurerm_resource_group.webserver_rg.name
-  sku="Standard"
+  sku = "Standard"
   sku_tier = "Regional"
   frontend_ip_configuration {
     name                 = "frontend-ip"
@@ -140,7 +128,6 @@ resource "azurerm_lb_backend_address_pool" "webserver_vmsspool" {
 
 # define Health Probe
 resource "azurerm_lb_probe" "ProbeA" {
-  resource_group_name = azurerm_resource_group.webserver_rg.name
   loadbalancer_id     = azurerm_lb.webserver_app_balancer.id
   name                = "probeA"
   port                = 8080
@@ -153,7 +140,6 @@ resource "azurerm_lb_probe" "ProbeA" {
 
 # Defin Load Balancing Rule
 resource "azurerm_lb_rule" "RuleA" {
-  resource_group_name            = azurerm_resource_group.webserver_rg.name
   loadbalancer_id                = azurerm_lb.webserver_app_balancer.id
   name                           = "RuleA"
   protocol                       = "Tcp"
@@ -166,75 +152,39 @@ resource "azurerm_lb_rule" "RuleA" {
   ]
 }
 
-# Create VMSS
-resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
+resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
   name                = "webserver-scaleset"
-  location            = azurerm_resource_group.webserver_rg.location
   resource_group_name = azurerm_resource_group.webserver_rg.name
+  location            = azurerm_resource_group.webserver_rg.location
+  sku                 = var.vm_size
+  instances           = 2
+  admin_username      = var.user
 
-  # automatic rolling upgrade
-  automatic_os_upgrade = true
-  upgrade_policy_mode  = "Rolling"
-
-  rolling_upgrade_policy {
-    max_batch_instance_percent              = 20
-    max_unhealthy_instance_percent          = 20
-    max_unhealthy_upgraded_instance_percent = 5
-    pause_time_between_batches              = "PT0S"
+  admin_ssh_key {
+    username   = var.user
+    public_key = local.public_key
   }
 
-  # required when using rolling upgrade policy
-  health_probe_id = azurerm_lb_probe.ProbeA.id
-
-  sku {
-    name     = var.vm_size
-    tier     = "Standard"
-    capacity = 2
-  }
-
-  storage_profile_image_reference {
+  source_image_reference {
     publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = var.client_id
+    offer     = "0001-com-ubuntu-server-focal"
+    sku       = var.ubuntu_version
     version   = "latest"
   }
 
-  storage_profile_os_disk {
-    name              = ""
-    caching           = "ReadWrite"
-    create_option     = "FromImage"
-    managed_disk_type = "Standard_LRS"
+  os_disk {
+    storage_account_type = "Standard_LRS"
+    caching              = "ReadWrite"
   }
 
-  storage_profile_data_disk {
-    lun           = 0
-    caching       = "ReadWrite"
-    create_option = "Empty"
-    disk_size_gb  = 10
-  }
-
-  os_profile {
-    computer_name_prefix = "apache_webserver"
-    admin_username       = var.user
-  }
-
-  os_profile_linux_config {
-    disable_password_authentication = true
-
-    ssh_keys {
-      path     = "/home/${var.user}/.ssh/authorized_keys"
-      key_data = file("~/.ssh/id_rsa.pub")
-    }
-  }
-
-  network_profile {
-    name    = "networkprofile"
+  network_interface {
+    name    = "webserver-nic"
     primary = true
 
     ip_configuration {
-      name                                   = "IPConfiguration"
-      primary                                = true
-      subnet_id                              = azurerm_subnet.internal.id
+      name      = "internal"
+      primary   = true
+      subnet_id = azurerm_subnet.internal.id
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.webserver_vmsspool.id]
     }
   }
@@ -243,19 +193,95 @@ resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
   ]
 }
 
+# Create VMSS
+# resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
+#   name                = "webserver-scaleset"
+#   location            = azurerm_resource_group.webserver_rg.location
+#   resource_group_name = azurerm_resource_group.webserver_rg.name
+
+#   # automatic rolling upgrade
+#   automatic_os_upgrade = true
+#   upgrade_policy_mode  = "Rolling"
+
+#   rolling_upgrade_policy {
+#     max_batch_instance_percent              = 20
+#     max_unhealthy_instance_percent          = 20
+#     max_unhealthy_upgraded_instance_percent = 5
+#     pause_time_between_batches              = "PT0S"
+#   }
+
+#   # required when using rolling upgrade policy
+#   health_probe_id = azurerm_lb_probe.ProbeA.id
+
+#   sku {
+#     name     = var.vm_size
+#     tier     = "Standard"
+#     capacity = 2
+#   }
+
+#   storage_profile_image_reference {
+#     publisher = "Canonical"
+#     offer     = "UbuntuServer"
+#     sku       = var.ubuntu_version
+#     version   = "latest"
+#   }
+
+#   storage_profile_os_disk {
+#     name              = ""
+#     caching           = "ReadWrite"
+#     create_option     = "FromImage"
+#     managed_disk_type = "Standard_LRS"
+#   }
+
+#   storage_profile_data_disk {
+#     lun           = 0
+#     caching       = "ReadWrite"
+#     create_option = "Empty"
+#     disk_size_gb  = 10
+#   }
+
+#   os_profile {
+#     computer_name_prefix = "apache_webserver"
+#     admin_username       = var.user
+#   }
+
+#   os_profile_linux_config {
+#     disable_password_authentication = true
+
+#     ssh_keys {
+#       path     = "/home/${var.user}/.ssh/authorized_keys"
+#       key_data = file("id_rsa.pub")
+#     }
+#   }
+
+#   network_profile {
+#     name    = "networkprofile"
+#     primary = true
+
+#     ip_configuration {
+#       name                                   = "IPConfiguration"
+#       primary                                = true
+#       subnet_id                              = azurerm_subnet.internal.id
+#       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.webserver_vmsspool.id]
+#     }
+#   }
+#   depends_on=[
+#       azurerm_lb_backend_address_pool.webserver_vmsspool
+#   ]
+# }
+
 # Create SA & upload config_webserver.sh script
 resource "azurerm_storage_account" "webserver_sa" {
-  name                     = "webserver-sa"
+  name                     = "webserversa310583"
   resource_group_name      = azurerm_resource_group.webserver_rg.name
   location                 = azurerm_resource_group.webserver_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
-  allow_blob_public_access = true
 }
 
 resource "azurerm_storage_container" "webserver_data" {
-  name                  = "webserver-data"
-  storage_account_name  = "webserver-sa"
+  name                  = "webserverdata"
+  storage_account_name  = "webserversa310583"
   container_access_type = "blob"
   depends_on=[
     azurerm_storage_account.webserver_sa
@@ -264,9 +290,9 @@ resource "azurerm_storage_container" "webserver_data" {
 
 # Upload config_webserver.sh script as a blob to the Azure storage account
 resource "azurerm_storage_blob" "webserver_install" {
-  name                   = "webserver-install"
-  storage_account_name   = "webserver-sa"
-  storage_container_name = "webserver_data"
+  name                   = "webserverinstall"
+  storage_account_name   = "webserversa310583"
+  storage_container_name = "webserverdata"
   type                   = "Block"
   source                 = "config_webserver.sh"
   depends_on             = [azurerm_storage_container.webserver_data]
@@ -275,7 +301,7 @@ resource "azurerm_storage_blob" "webserver_install" {
 # Apply the custom script extension on the vmss
 resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   name                 = "webserver-extension"
-  virtual_machine_scale_set_id   = azurerm_windows_virtual_machine_scale_set.webserver_scaleset.id
+  virtual_machine_scale_set_id   = azurerm_linux_virtual_machine_scale_set.webserver_scaleset.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
   type_handler_version = "2.0"
@@ -284,7 +310,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   ]
   settings = <<SETTINGS
     {
-        "fileUris": ["https://${azurerm_storage_account.appstore.name}.blob.core.windows.net/webserver_data/config_webserver.sh"],
+        "fileUris": ["https://${azurerm_storage_account.webserver_sa.name}.blob.core.windows.net/webserverdata/config_webserver.sh"],
           "commandToExecute": "sh config_webserver.sh"
     }
 SETTINGS
