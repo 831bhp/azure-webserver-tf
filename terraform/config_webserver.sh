@@ -16,7 +16,7 @@ sudo cp /etc/salt/minion /etc/salt/minion.bak
 
 sudo apt update && sudo apt install git
 
-cd /opt && sudo git clone -b dev https://github.com/831bhp/azure-webserver-tf.git
+cd /opt && sudo git clone https://github.com/831bhp/azure-webserver-tf.git
 sudo cp /opt/azure-webserver-tf/salt/files/minion /etc/salt/minion
 sudo systemctl stop salt-minion
 sudo salt-call --local test.ping

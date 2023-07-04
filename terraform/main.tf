@@ -112,17 +112,6 @@ resource "azurerm_network_interface" "webserver_nic" {
   ]
 }
 
-# resource "tls_private_key" "linux_key" {
-#   algorithm = "RSA"
-#   rsa_bits = 4096
-# }
-
-# resource "local_file" "linux_key" {
-#   filename = "linuxkey.pem"
-#   content = tls_private_key.linux_key.private_key_pem
-#   file_permission = "400"
-# }
-
 # Create Load balancer
 resource "azurerm_lb" "webserver_app_balancer" {
   name                = "webserver-app-balancer"
@@ -198,7 +187,7 @@ resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
   health_probe_id = azurerm_lb_probe.ProbeA.id
 
   sku {
-    name     = "Standard_F2"
+    name     = var.vm_size
     tier     = "Standard"
     capacity = 2
   }
@@ -206,7 +195,7 @@ resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
   storage_profile_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "20.04-LTS"
+    sku       = var.client_id
     version   = "latest"
   }
 
@@ -226,14 +215,14 @@ resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
 
   os_profile {
     computer_name_prefix = "apache_webserver"
-    admin_username       = "admin"
+    admin_username       = var.user
   }
 
   os_profile_linux_config {
     disable_password_authentication = true
 
     ssh_keys {
-      path     = "/home/admin/.ssh/authorized_keys"
+      path     = "/home/${var.user}/.ssh/authorized_keys"
       key_data = file("~/.ssh/id_rsa.pub")
     }
   }
@@ -254,7 +243,7 @@ resource "azurerm_virtual_machine_scale_set" "webserver_scaleset" {
   ]
 }
 
-# Create SA & upload install_salt.sh script
+# Create SA & upload config_webserver.sh script
 resource "azurerm_storage_account" "webserver_sa" {
   name                     = "webserver-sa"
   resource_group_name      = azurerm_resource_group.webserver_rg.name
@@ -273,13 +262,13 @@ resource "azurerm_storage_container" "webserver_data" {
   ]
 }
 
-# Upload install_salt.sh script as a blob to the Azure storage account
+# Upload config_webserver.sh script as a blob to the Azure storage account
 resource "azurerm_storage_blob" "webserver_install" {
   name                   = "webserver-install"
   storage_account_name   = "webserver-sa"
   storage_container_name = "webserver_data"
   type                   = "Block"
-  source                 = "install_salt.sh"
+  source                 = "config_webserver.sh"
   depends_on             = [azurerm_storage_container.webserver_data]
 }
 
@@ -295,8 +284,8 @@ resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   ]
   settings = <<SETTINGS
     {
-        "fileUris": ["https://${azurerm_storage_account.appstore.name}.blob.core.windows.net/webserver_data/install_salt.sh"],
-          "commandToExecute": "sh install_salt.sh"
+        "fileUris": ["https://${azurerm_storage_account.appstore.name}.blob.core.windows.net/webserver_data/config_webserver.sh"],
+          "commandToExecute": "sh config_webserver.sh"
     }
 SETTINGS
 }
