@@ -28,7 +28,7 @@ Salt can be used to do the SCM of the Apache2 server, the packages can be easily
    bash sudo ./run_all.sh --client-id "e16dxxx-xxxx-xxxx-8441-3211047xxxxx"\
                         --client-secret "igX8Q~xxxxxxxxxxxxxxxxxxxxmWnVrDjrd4TcfG"\
                         --tenant-id "5938xxxx-xxxx-xxxx-x45x-xxx7254f9dxx"\
-                        --subscription-id "xxxxxxx6-x1bx-x2bx-xxxf-f6xxxxxx18xx"
+                         --subscription-id "xxxxxxx6-x1bx-x2bx-xxxf-f6xxxxxx18xx"
    .
    .
    .
@@ -38,3 +38,4 @@ Salt can be used to do the SCM of the Apache2 server, the packages can be easily
    ```
 
 3. If everything works fine, you will see following on the webpage:  
+<img width="1228" alt="Screenshot 2023-07-04 at 11 09 18 PM" src="https://github.com/831bhp/azure-webserver-tf/assets/99785311/378ab43b-366f-4bbb-8e98-de06cc2da596">
