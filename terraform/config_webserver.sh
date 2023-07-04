@@ -14,7 +14,7 @@ sudo sh bootstrap_salt.sh
 sudo cp /etc/salt/minion /etc/salt/minion.bak
 #sed -i 's/#file_client: local/file_client: local/g' /etc/salt/minion
 
-sudo apt update && sudo apt install git
+sudo apt update && sudo apt install -y git
 
 cd /opt && sudo git clone https://github.com/831bhp/azure-webserver-tf.git
 sudo cp /opt/azure-webserver-tf/salt/files/minion /etc/salt/minion

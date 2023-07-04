@@ -1,0 +1,444 @@
+bash config_webserver.sh 
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100  345k  100  345k    0     0   207k      0  0:00:01  0:00:01 --:--:-- 1087k
+ *  INFO: Running version: 2023.04.26
+ *  INFO: Executed by: sh
+ *  INFO: Command line: 'bootstrap_salt.sh '
+ *  WARN: Running the unstable version of bootstrap-salt.sh
+
+ *  INFO: System Information:
+ *  INFO:   CPU:          GenuineIntel
+ *  INFO:   CPU Arch:     x86_64
+ *  INFO:   OS Name:      Linux
+ *  INFO:   OS Version:   4.15.0-1009-azure
+ *  INFO:   Distribution: Ubuntu 18.04
+
+ *  INFO: Installing minion
+ *  INFO: Found function install_ubuntu_onedir_deps
+ *  INFO: Found function config_salt
+ *  INFO: Found function preseed_master
+ *  INFO: Found function install_ubuntu_onedir
+ *  INFO: Found function install_ubuntu_restart_daemons
+ *  INFO: Found function daemons_running_onedir
+ *  INFO: Found function install_ubuntu_check_services
+ *  INFO: Running install_ubuntu_onedir_deps()
+Get:1 http://azure.archive.ubuntu.com/ubuntu bionic InRelease [242 kB]
+Get:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu bionic-backports InRelease [83.3 kB]
+Get:4 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu bionic/universe Sources [9051 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu bionic/main Sources [829 kB]
+Get:7 http://azure.archive.ubuntu.com/ubuntu bionic/multiverse Sources [181 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu bionic/restricted Sources [5324 B]
+Get:9 http://azure.archive.ubuntu.com/ubuntu bionic/main amd64 Packages [1019 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu bionic/main Translation-en [516 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu bionic/universe amd64 Packages [8570 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu bionic/universe Translation-en [4941 kB]
+Get:13 http://azure.archive.ubuntu.com/ubuntu bionic/multiverse amd64 Packages [151 kB]
+Get:14 http://azure.archive.ubuntu.com/ubuntu bionic-updates/multiverse Sources [18.9 kB]
+Get:15 http://azure.archive.ubuntu.com/ubuntu bionic-updates/restricted Sources [35.3 kB]
+Get:16 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main Sources [546 kB]
+Get:17 http://azure.archive.ubuntu.com/ubuntu bionic-updates/universe Sources [512 kB]
+Get:18 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [3045 kB]
+Get:19 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main Translation-en [553 kB]
+Get:20 http://azure.archive.ubuntu.com/ubuntu bionic-updates/restricted amd64 Packages [1347 kB]
+Get:21 http://azure.archive.ubuntu.com/ubuntu bionic-updates/restricted Translation-en [187 kB]
+Get:22 http://azure.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1914 kB]
+Get:23 http://azure.archive.ubuntu.com/ubuntu bionic-updates/universe Translation-en [420 kB]
+Get:24 http://azure.archive.ubuntu.com/ubuntu bionic-updates/multiverse amd64 Packages [25.6 kB]
+Get:25 http://azure.archive.ubuntu.com/ubuntu bionic-updates/multiverse Translation-en [6088 B]
+Get:26 http://azure.archive.ubuntu.com/ubuntu bionic-backports/main Sources [10.5 kB]
+Get:27 http://azure.archive.ubuntu.com/ubuntu bionic-backports/universe Sources [6600 B]
+Get:28 http://azure.archive.ubuntu.com/ubuntu bionic-backports/main amd64 Packages [53.3 kB]
+Get:29 http://azure.archive.ubuntu.com/ubuntu bionic-backports/main Translation-en [14.6 kB]
+Get:30 http://azure.archive.ubuntu.com/ubuntu bionic-backports/universe amd64 Packages [18.2 kB]
+Get:31 http://azure.archive.ubuntu.com/ubuntu bionic-backports/universe Translation-en [8668 B]
+Get:32 http://security.ubuntu.com/ubuntu bionic-security/main Sources [301 kB]
+Get:33 http://security.ubuntu.com/ubuntu bionic-security/restricted Sources [32.4 kB]
+Get:34 http://security.ubuntu.com/ubuntu bionic-security/multiverse Sources [12.2 kB]
+Get:35 http://security.ubuntu.com/ubuntu bionic-security/universe Sources [337 kB]
+Get:36 http://security.ubuntu.com/ubuntu bionic-security/main amd64 Packages [2717 kB]
+Get:37 http://security.ubuntu.com/ubuntu bionic-security/main Translation-en [467 kB]
+Get:38 http://security.ubuntu.com/ubuntu bionic-security/restricted amd64 Packages [1317 kB]
+Get:39 http://security.ubuntu.com/ubuntu bionic-security/restricted Translation-en [182 kB]
+Get:40 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 Packages [1303 kB]
+Get:41 http://security.ubuntu.com/ubuntu bionic-security/universe Translation-en [308 kB]
+Get:42 http://security.ubuntu.com/ubuntu bionic-security/multiverse amd64 Packages [19.8 kB]
+Get:43 http://security.ubuntu.com/ubuntu bionic-security/multiverse Translation-en [3928 B]
+Fetched 41.5 MB in 7s (5947 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  dirmngr gnupg-l10n gnupg-utils gpg gpg-agent gpg-wks-client gpg-wks-server
+  gpgconf gpgsm gpgv
+Suggested packages:
+  dbus-user-session pinentry-gnome3 tor parcimonie xloadimage scdaemon
+The following NEW packages will be installed:
+  apt-transport-https
+The following packages will be upgraded:
+  ca-certificates dirmngr gnupg gnupg-l10n gnupg-utils gpg gpg-agent
+  gpg-wks-client gpg-wks-server gpgconf gpgsm gpgv wget
+13 upgraded, 1 newly installed, 0 to remove and 332 not upgraded.
+Need to get 2621 kB of archives.
+After this operation, 173 kB of additional disk space will be used.
+Get:1 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpg-wks-client amd64 2.2.4-1ubuntu1.6 [91.8 kB]
+Get:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 dirmngr amd64 2.2.4-1ubuntu1.6 [317 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gnupg-utils amd64 2.2.4-1ubuntu1.6 [128 kB]
+Get:4 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpg-wks-server amd64 2.2.4-1ubuntu1.6 [85.0 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpg-agent amd64 2.2.4-1ubuntu1.6 [227 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpg amd64 2.2.4-1ubuntu1.6 [468 kB]
+Get:7 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpgconf amd64 2.2.4-1ubuntu1.6 [124 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gnupg-l10n all 2.2.4-1ubuntu1.6 [50.1 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gnupg amd64 2.2.4-1ubuntu1.6 [249 kB]
+Get:10 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpgsm amd64 2.2.4-1ubuntu1.6 [215 kB]
+Get:11 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 gpgv amd64 2.2.4-1ubuntu1.6 [198 kB]
+Get:12 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ca-certificates all 20230311ubuntu0.18.04.1 [151 kB]
+Get:13 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 wget amd64 1.19.4-1ubuntu2.2 [316 kB]
+Get:14 http://azure.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 apt-transport-https all 1.6.17 [1692 B]
+Preconfiguring packages ...
+Fetched 2621 kB in 0s (5376 kB/s)
+(Reading database ... 56504 files and directories currently installed.)
+Preparing to unpack .../00-gpg-wks-client_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpg-wks-client (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../01-dirmngr_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking dirmngr (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../02-gnupg-utils_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gnupg-utils (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../03-gpg-wks-server_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpg-wks-server (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../04-gpg-agent_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpg-agent (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../05-gpg_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpg (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../06-gpgconf_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpgconf (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../07-gnupg-l10n_2.2.4-1ubuntu1.6_all.deb ...
+Unpacking gnupg-l10n (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../08-gnupg_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gnupg (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../09-gpgsm_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpgsm (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Preparing to unpack .../10-gpgv_2.2.4-1ubuntu1.6_amd64.deb ...
+Unpacking gpgv (2.2.4-1ubuntu1.6) over (2.2.4-1ubuntu1) ...
+Setting up gpgv (2.2.4-1ubuntu1.6) ...
+(Reading database ... 56504 files and directories currently installed.)
+Preparing to unpack .../ca-certificates_20230311ubuntu0.18.04.1_all.deb ...
+Unpacking ca-certificates (20230311ubuntu0.18.04.1) over (20180409) ...
+Preparing to unpack .../wget_1.19.4-1ubuntu2.2_amd64.deb ...
+Unpacking wget (1.19.4-1ubuntu2.2) over (1.19.4-1ubuntu2) ...
+Selecting previously unselected package apt-transport-https.
+Preparing to unpack .../apt-transport-https_1.6.17_all.deb ...
+Unpacking apt-transport-https (1.6.17) ...
+Setting up apt-transport-https (1.6.17) ...
+Processing triggers for install-info (6.5.0.dfsg.1-2) ...
+Setting up gpgconf (2.2.4-1ubuntu1.6) ...
+Setting up gpg-agent (2.2.4-1ubuntu1.6) ...
+Setting up gnupg-l10n (2.2.4-1ubuntu1.6) ...
+Setting up gpgsm (2.2.4-1ubuntu1.6) ...
+Setting up wget (1.19.4-1ubuntu2.2) ...
+Setting up gnupg-utils (2.2.4-1ubuntu1.6) ...
+Processing triggers for man-db (2.8.3-2) ...
+Setting up ca-certificates (20230311ubuntu0.18.04.1) ...
+Updating certificates in /etc/ssl/certs...
+rehash: skipping ca-certificates.crt,it does not contain exactly one certificate or CRL
+49 added, 45 removed; done.
+Setting up dirmngr (2.2.4-1ubuntu1.6) ...
+Setting up gpg (2.2.4-1ubuntu1.6) ...
+Setting up gpg-wks-server (2.2.4-1ubuntu1.6) ...
+Setting up gpg-wks-client (2.2.4-1ubuntu1.6) ...
+Setting up gnupg (2.2.4-1ubuntu1.6) ...
+Processing triggers for ca-certificates (20230311ubuntu0.18.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+Hit:1 http://azure.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://azure.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Get:5 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic InRelease [1499 B]
+Get:6 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic/main amd64 Packages [2722 B]
+Fetched 4221 B in 2s (2171 B/s)
+Reading package lists...
+Hit:1 http://azure.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://azure.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:4 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:5 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic InRelease
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+python3-yaml is already the newest version (3.12-1build2).
+The following additional packages will be installed:
+  apt apt-utils libapt-inst2.0 libapt-pkg5.0 libpci3
+Suggested packages:
+  apt-doc aptitude | synaptic | wajig dpkg-dev python3-apt-dbg python-apt-doc
+  python3-socks
+The following packages will be upgraded:
+  apt apt-utils libapt-inst2.0 libapt-pkg5.0 libpci3 pciutils procps
+  python3-apt python3-requests
+9 upgraded, 0 newly installed, 0 to remove and 323 not upgraded.
+Need to get 2994 kB of archives.
+After this operation, 205 kB of additional disk space will be used.
+Get:1 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libapt-pkg5.0 amd64 1.6.17 [812 kB]
+Get:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libapt-inst2.0 amd64 1.6.17 [54.6 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 apt amd64 1.6.17 [1206 kB]
+Get:4 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 apt-utils amd64 1.6.17 [206 kB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 procps amd64 2:3.3.12-3ubuntu1.2 [225 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 pciutils amd64 1:3.5.2-1ubuntu1.1 [257 kB]
+Get:7 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libpci3 amd64 1:3.5.2-1ubuntu1.1 [24.1 kB]
+Get:8 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-apt amd64 1.6.6 [149 kB]
+Get:9 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-requests all 2.18.4-2ubuntu0.1 [58.3 kB]
+Fetched 2994 kB in 0s (6219 kB/s)
+(Reading database ... 56512 files and directories currently installed.)
+Preparing to unpack .../libapt-pkg5.0_1.6.17_amd64.deb ...
+Unpacking libapt-pkg5.0:amd64 (1.6.17) over (1.6.1) ...
+Setting up libapt-pkg5.0:amd64 (1.6.17) ...
+(Reading database ... 56512 files and directories currently installed.)
+Preparing to unpack .../libapt-inst2.0_1.6.17_amd64.deb ...
+Unpacking libapt-inst2.0:amd64 (1.6.17) over (1.6.1) ...
+Preparing to unpack .../archives/apt_1.6.17_amd64.deb ...
+Unpacking apt (1.6.17) over (1.6.1) ...
+Setting up apt (1.6.17) ...
+Installing new version of config file /etc/apt/apt.conf.d/01autoremove ...
+Removing obsolete conffile /etc/kernel/postinst.d/apt-auto-removal ...
+(Reading database ... 56518 files and directories currently installed.)
+Preparing to unpack .../0-apt-utils_1.6.17_amd64.deb ...
+Unpacking apt-utils (1.6.17) over (1.6.1) ...
+Preparing to unpack .../1-procps_2%3a3.3.12-3ubuntu1.2_amd64.deb ...
+Unpacking procps (2:3.3.12-3ubuntu1.2) over (2:3.3.12-3ubuntu1) ...
+Preparing to unpack .../2-pciutils_1%3a3.5.2-1ubuntu1.1_amd64.deb ...
+Unpacking pciutils (1:3.5.2-1ubuntu1.1) over (1:3.5.2-1ubuntu1) ...
+Preparing to unpack .../3-libpci3_1%3a3.5.2-1ubuntu1.1_amd64.deb ...
+Unpacking libpci3:amd64 (1:3.5.2-1ubuntu1.1) over (1:3.5.2-1ubuntu1) ...
+Preparing to unpack .../4-python3-apt_1.6.6_amd64.deb ...
+Unpacking python3-apt (1.6.6) over (1.6.0) ...
+Preparing to unpack .../5-python3-requests_2.18.4-2ubuntu0.1_all.deb ...
+Unpacking python3-requests (2.18.4-2ubuntu0.1) over (2.18.4-2) ...
+Setting up libapt-inst2.0:amd64 (1.6.17) ...
+Setting up python3-apt (1.6.6) ...
+Processing triggers for ureadahead (0.100.0-20) ...
+Setting up apt-utils (1.6.17) ...
+Setting up procps (2:3.3.12-3ubuntu1.2) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for systemd (237-3ubuntu10) ...
+Setting up python3-requests (2.18.4-2ubuntu0.1) ...
+Processing triggers for man-db (2.8.3-2) ...
+Setting up libpci3:amd64 (1:3.5.2-1ubuntu1.1) ...
+Setting up pciutils (1:3.5.2-1ubuntu1.1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+ *  INFO: Running install_ubuntu_onedir()
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  dctrl-tools debconf debconf-i18n debconf-utils python3-debconf salt-common
+Suggested packages:
+  debtags debconf-doc libterm-readline-gnu-perl libgtk3-perl libnet-ldap-perl
+  libqtgui4-perl libqtcore4-perl ifupdown
+The following NEW packages will be installed:
+  dctrl-tools debconf-utils salt-common salt-minion
+The following packages will be upgraded:
+  debconf debconf-i18n python3-debconf
+3 upgraded, 4 newly installed, 0 to remove and 320 not upgraded.
+Need to get 58.4 MB of archives.
+After this operation, 197 MB of additional disk space will be used.
+Get:1 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 python3-debconf all 1.5.66ubuntu1 [4060 B]
+Get:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 debconf-i18n all 1.5.66ubuntu1 [205 kB]
+Get:3 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 debconf all 1.5.66ubuntu1 [124 kB]
+Get:4 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic/main amd64 salt-common amd64 3005.1+ds-4 [57.9 MB]
+Get:5 http://azure.archive.ubuntu.com/ubuntu bionic/main amd64 dctrl-tools amd64 2.24-2build1 [60.9 kB]
+Get:6 http://azure.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 debconf-utils all 1.5.66ubuntu1 [56.6 kB]
+Get:7 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic/main amd64 salt-minion all 3005.1+ds-4 [28.2 kB]
+Preconfiguring packages ...
+Fetched 58.4 MB in 5s (12.4 MB/s)
+(Reading database ... 56518 files and directories currently installed.)
+Preparing to unpack .../python3-debconf_1.5.66ubuntu1_all.deb ...
+Unpacking python3-debconf (1.5.66ubuntu1) over (1.5.66) ...
+Preparing to unpack .../debconf-i18n_1.5.66ubuntu1_all.deb ...
+Unpacking debconf-i18n (1.5.66ubuntu1) over (1.5.66) ...
+Preparing to unpack .../debconf_1.5.66ubuntu1_all.deb ...
+Unpacking debconf (1.5.66ubuntu1) over (1.5.66) ...
+Setting up debconf (1.5.66ubuntu1) ...
+Selecting previously unselected package dctrl-tools.
+(Reading database ... 56518 files and directories currently installed.)
+Preparing to unpack .../dctrl-tools_2.24-2build1_amd64.deb ...
+Unpacking dctrl-tools (2.24-2build1) ...
+Selecting previously unselected package debconf-utils.
+Preparing to unpack .../debconf-utils_1.5.66ubuntu1_all.deb ...
+Unpacking debconf-utils (1.5.66ubuntu1) ...
+Selecting previously unselected package salt-common.
+Preparing to unpack .../salt-common_3005.1+ds-4_amd64.deb ...
+Unpacking salt-common (3005.1+ds-4) ...
+Selecting previously unselected package salt-minion.
+Preparing to unpack .../salt-minion_3005.1+ds-4_all.deb ...
+Unpacking salt-minion (3005.1+ds-4) ...
+Processing triggers for ureadahead (0.100.0-20) ...
+Setting up debconf-i18n (1.5.66ubuntu1) ...
+Setting up debconf-utils (1.5.66ubuntu1) ...
+Setting up dctrl-tools (2.24-2build1) ...
+Setting up python3-debconf (1.5.66ubuntu1) ...
+Processing triggers for systemd (237-3ubuntu10) ...
+Processing triggers for man-db (2.8.3-2) ...
+Setting up salt-common (3005.1+ds-4) ...
+Setting up salt-minion (3005.1+ds-4) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/salt-minion.service → /lib/systemd/system/salt-minion.service.
+Processing triggers for ureadahead (0.100.0-20) ...
+Processing triggers for systemd (237-3ubuntu10) ...
+ *  INFO: Running install_ubuntu_check_services()
+ *  INFO: Running install_ubuntu_restart_daemons()
+ *  INFO: Running daemons_running_onedir()
+ *  INFO: Salt installed!
+Hit:1 http://azure.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:3 http://azure.archive.ubuntu.com/ubuntu bionic-backports InRelease               
+Hit:4 http://security.ubuntu.com/ubuntu bionic-security InRelease                                                   
+Hit:5 https://repo.saltproject.io/salt/py3/ubuntu/18.04/amd64/latest bionic InRelease    
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+320 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following additional packages will be installed:
+  git-man
+Suggested packages:
+  git-daemon-run | git-daemon-sysvinit git-doc git-el git-email git-gui gitk gitweb git-cvs git-mediawiki git-svn
+The following packages will be upgraded:
+  git git-man
+2 upgraded, 0 newly installed, 0 to remove and 318 not upgraded.
+Need to get 4794 kB of archives.
+After this operation, 480 kB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 git amd64 1:2.17.1-1ubuntu0.18 [3990 kB]
+Get:2 http://azure.archive.ubuntu.com/ubuntu bionic-updates/main amd64 git-man all 1:2.17.1-1ubuntu0.18 [804 kB]
+Fetched 4794 kB in 0s (37.6 MB/s)
+(Reading database ... 68526 files and directories currently installed.)
+Preparing to unpack .../git_1%3a2.17.1-1ubuntu0.18_amd64.deb ...
+Unpacking git (1:2.17.1-1ubuntu0.18) over (1:2.17.0-1ubuntu1) ...
+Preparing to unpack .../git-man_1%3a2.17.1-1ubuntu0.18_all.deb ...
+Unpacking git-man (1:2.17.1-1ubuntu0.18) over (1:2.17.0-1ubuntu1) ...
+Setting up git-man (1:2.17.1-1ubuntu0.18) ...
+Processing triggers for man-db (2.8.3-2) ...
+Setting up git (1:2.17.1-1ubuntu0.18) ...
+Cloning into 'azure-webserver-tf'...
+remote: Enumerating objects: 47, done.
+remote: Counting objects: 100% (47/47), done.
+remote: Compressing objects: 100% (32/32), done.
+remote: Total 47 (delta 20), reused 40 (delta 13), pack-reused 0
+Unpacking objects: 100% (47/47), done.
+local:
+    True
+local:
+----------
+          ID: Install Pkgs
+    Function: pkg.installed
+      Result: True
+     Comment: The following packages were installed/updated: apache2
+     Started: 17:23:07.234509
+    Duration: 18933.57 ms
+     Changes:   
+              ----------
+              apache2:
+                  ----------
+                  new:
+                      2.4.29-1ubuntu4.27
+                  old:
+              apache2-bin:
+                  ----------
+                  new:
+                      2.4.29-1ubuntu4.27
+                  old:
+              apache2-data:
+                  ----------
+                  new:
+                      2.4.29-1ubuntu4.27
+                  old:
+              apache2-utils:
+                  ----------
+                  new:
+                      2.4.29-1ubuntu4.27
+                  old:
+              libapr1:
+                  ----------
+                  new:
+                      1.6.3-2
+                  old:
+              libaprutil1:
+                  ----------
+                  new:
+                      1.6.1-2ubuntu0.1
+                  old:
+              libaprutil1-dbd-sqlite3:
+                  ----------
+                  new:
+                      1.6.1-2ubuntu0.1
+                  old:
+              libaprutil1-ldap:
+                  ----------
+                  new:
+                      1.6.1-2ubuntu0.1
+                  old:
+              liblua5.2-0:
+                  ----------
+                  new:
+                      5.2.4-1.1build1
+                  old:
+              libssl1.1:
+                  ----------
+                  new:
+                      1.1.1-1ubuntu2.1~18.04.23
+                  old:
+                      1.1.0g-2ubuntu4
+              ssl-cert:
+                  ----------
+                  new:
+                      1.0.39
+                  old:
+----------
+          ID: Enable apache service
+    Function: service.enabled
+        Name: apache2
+      Result: True
+     Comment: Service apache2 is already enabled, and is in the desired state
+     Started: 17:23:26.180957
+    Duration: 20.933 ms
+     Changes:   
+----------
+          ID: Stop apache service
+    Function: service.dead
+        Name: apache2
+      Result: True
+     Comment: Service apache2 was killed
+     Started: 17:23:26.202174
+    Duration: 120.327 ms
+     Changes:   
+              ----------
+              apache2:
+                  False
+----------
+          ID: Start apache service
+    Function: service.running
+        Name: apache2
+      Result: True
+     Comment: Started service apache2
+     Started: 17:23:26.322796
+    Duration: 87.079 ms
+     Changes:   
+              ----------
+              apache2:
+                  True
+
+Summary for local
+------------
+Succeeded: 4 (changed=3)
+Failed:    0
+------------
+Total states run:     4
+Total run time:  19.162 s
