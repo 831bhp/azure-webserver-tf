@@ -216,11 +216,9 @@ resource "azurerm_storage_blob" "webserver_install" {
 resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   name                 = "webserver-extension"
   virtual_machine_scale_set_id   = azurerm_linux_virtual_machine_scale_set.webserver_scaleset.id
-  # publisher            = "Microsoft.Azure.Extensions"
-  # type                 = "CustomScript"
-  type_handler_version = "1.0"
-  publisher            = "Microsoft.Compute"
-  type                 = "CustomScriptExtension"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
 
   depends_on = [
     azurerm_linux_virtual_machine_scale_set.webserver_scaleset,
