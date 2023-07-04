@@ -13,8 +13,11 @@ variable "vm_size" {
   default = "Standard_B2s"
 }
 
+variable "ubuntu_sku" {
+  default = "18.04-LTS"
+}
 variable "ubuntu_version" {
-  default = "18.04-lts"
+  default = "18.04.201804262"
 }
 
 variable "storage_account_type" {

@@ -156,9 +156,10 @@ resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = var.ubuntu_version
-    version   = "latest"
+    offer     = "UbuntuServer"
+    sku       = var.ubuntu_sku
+    version   = var.ubuntu_version
+
   }
 
   os_disk {
@@ -217,7 +218,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   virtual_machine_scale_set_id   = azurerm_linux_virtual_machine_scale_set.webserver_scaleset.id
   # publisher            = "Microsoft.Azure.Extensions"
   # type                 = "CustomScript"
-  # type_handler_version = "2.0"
+  type_handler_version = "1.0"
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"
 
@@ -228,7 +229,7 @@ resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   settings = <<SETTINGS
     {
         "fileUris": ["https://${azurerm_storage_account.webserver_sa.name}.blob.core.windows.net/webserverdata/config_webserver.sh"],
-        "commandToExecute": "./config_webserver.sh"
+        "commandToExecute": "sh config_webserver.sh"
     }
 SETTINGS
 }
@@ -252,7 +253,7 @@ resource "azurerm_network_interface" "jumpvm_nic" {
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.jumpvm_public_ip.id
   }
-  depends_on = [azurerm_public_ip.azurerm_public_ip.jumpvm_public_ip]
+  depends_on = [azurerm_public_ip.jumpvm_public_ip]
 }
 
 resource "azurerm_linux_virtual_machine" "jumpVM" {
@@ -277,9 +278,9 @@ resource "azurerm_linux_virtual_machine" "jumpVM" {
 
   source_image_reference {
     publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = var.ubuntu_version
-    version   = "latest"
+    offer     = "UbuntuServer"
+    sku       = var.ubuntu_sku
+    version   = var.ubuntu_version
   }
   depends_on = [azurerm_network_interface.jumpvm_nic]
 }
