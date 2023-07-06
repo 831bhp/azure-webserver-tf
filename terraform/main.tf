@@ -34,6 +34,7 @@ resource "azurerm_virtual_network" "webserver_vpn" {
   address_space       = ["10.0.0.0/16"]
   location            = azurerm_resource_group.webserver_rg.location
   resource_group_name = azurerm_resource_group.webserver_rg.name
+  depends_on = [ azurerm_resource_group.webserver_rg ]
 }
 
 resource "azurerm_subnet" "internal" {
@@ -41,6 +42,7 @@ resource "azurerm_subnet" "internal" {
   resource_group_name  = azurerm_resource_group.webserver_rg.name
   virtual_network_name = azurerm_virtual_network.webserver_vpn.name
   address_prefixes     = ["10.0.2.0/24"]
+  depends_on = [ azurerm_virtual_network.webserver_vpn ]
 }
 
 # Create NSG to allow inbound port 8080 & 22 to the VMSS VMs
@@ -71,13 +73,14 @@ resource "azurerm_network_security_group" "webserver_nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-
+  depends_on = [ azurerm_subnet.internal ]
 }
 
 # Bind/associate the NSG to internal subnet
 resource "azurerm_subnet_network_security_group_association" "webserver_nsg-associate" {
   subnet_id                 = azurerm_subnet.internal.id
   network_security_group_id = azurerm_network_security_group.webserver_nsg.id
+  depends_on = [ azurerm_network_security_group.webserver_nsg ]
 }
 
 # Create Public IP
@@ -87,6 +90,7 @@ resource "azurerm_public_ip" "webserver_public_ip" {
   resource_group_name = azurerm_resource_group.webserver_rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
+  depends_on = [ azurerm_resource_group.webserver_rg ]
 }
 
 # Create Load balancer
@@ -178,11 +182,8 @@ resource "azurerm_linux_virtual_machine_scale_set" "webserver_scaleset" {
       load_balancer_backend_address_pool_ids = [azurerm_lb_backend_address_pool.webserver_vmsspool.id]
     }
   }
-  depends_on=[
-      azurerm_lb_backend_address_pool.webserver_vmsspool
-  ]
+  depends_on=[ azurerm_storage_account.webserver_sa ]
 }
-
 
 # Create SA & upload config_webserver.sh script
 resource "azurerm_storage_account" "webserver_sa" {
@@ -191,6 +192,7 @@ resource "azurerm_storage_account" "webserver_sa" {
   location                 = azurerm_resource_group.webserver_rg.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
+  depends_on = [ azurerm_lb_rule.RuleA ]
 }
 
 resource "azurerm_storage_container" "webserver_data" {
@@ -218,8 +220,8 @@ resource "azurerm_virtual_machine_scale_set_extension" "webserver_extension" {
   virtual_machine_scale_set_id   = azurerm_linux_virtual_machine_scale_set.webserver_scaleset.id
   publisher            = "Microsoft.Azure.Extensions"
   type                 = "CustomScript"
-  type_handler_version = "2.0"
-
+  type_handler_version = "2.1"
+  
   depends_on = [
     azurerm_linux_virtual_machine_scale_set.webserver_scaleset,
     azurerm_storage_blob.webserver_install

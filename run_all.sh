@@ -75,7 +75,8 @@ if [[ -f "/etc/os-release" ]]; then
     sudo apt update && sudo apt install terraform | sudo tee -a ${LOG_FILE}
   fi
 else
-  die "OS is not Ubuntu, please run the script on Ubuntu"
+    true
+#   die "OS is not Ubuntu, please run the script on Ubuntu"
 fi
 
 # Run terraform to provision resources on Azure
